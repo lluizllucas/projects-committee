@@ -1,97 +1,84 @@
-# idea-committee
+# Comitê de Análise de Ideias
 
-Um agente de análise de ideias com um comitê de especialistas virtuais. Passe uma ideia e o sistema aciona cada membro do comitê em sequência (com paralelismo na Fase 1), gerando análises especializadas e um relatório final consolidado em Markdown.
+Um sistema de análise multidisciplinar baseado em Claude. Você apresenta uma ideia e um comitê de especialistas a avalia em profundidade — de diferentes ângulos, em sequência lógica, sem otimismo fácil.
 
-## Estrutura do Comitê
+## O que é
 
-```
-Fase 1 (paralelo)
-├── DESENVOLVEDOR  — viabilidade técnica e stack
-├── INFRA          — infraestrutura e hospedagem
-├── COMERCIAL      — mercado, ICP, monetização
-└── RH             — pessoas, domínio e criação de expert dinâmico
-    └── [EXPERT]   — especialista de domínio criado pelo RH (paralelo com Fase 1b)
+O comitê é composto por membros fixos com papéis bem definidos: Desenvolvedor, Infra, Comercial, RH, Arquiteto, DevOps, Auditor e Maestro. Cada um analisa a ideia sob sua perspectiva específica, e o Maestro consolida tudo em um veredicto final de viabilidade.
 
-Fase 2
-└── ARQUITETO      — arquitetura de sistema (lê DESENVOLVEDOR + INFRA)
+O RH tem um papel especial: ele identifica o domínio não-técnico mais crítico da ideia (contabilidade, medicina, direito, logística, etc.) e cria dinamicamente um novo especialista para o comitê — um arquivo `.md` com o system prompt desse expert. Esse especialista é acionado na mesma sessão e suas análises entram no relatório final.
 
-Fase 3
-└── DEVOPS         — custos e operações (lê ARQUITETO)
+O Auditor fala por último entre os especialistas — depois de ler tudo — e tem permissão explícita para ser duro, cético e apontar o que ninguém quis dizer.
 
-Fase 4
-└── AUDITOR        — questionamento e pontos cegos (lê todos)
-
-Fase 5
-└── MAESTRO        — relatório executivo consolidado (lê todos)
-```
-
-## Pré-requisitos
-
-- Python 3.8+
-- Conta Anthropic com API key
-
-## Instalação
-
-```bash
-# Clone ou baixe o projeto
-cd idea-committee
-
-# Instale as dependências
-pip install -r requirements.txt
-
-# Configure a API key
-cp .env.example .env
-# Edite .env e adicione sua ANTHROPIC_API_KEY
-```
-
-## Uso
-
-```bash
-python comite.py "sua ideia aqui"
-```
-
-### Exemplos
-
-```bash
-python comite.py "Um app de telemedicina para idosos com interface simplificada"
-python comite.py "Marketplace de freelancers especializados em automação industrial"
-python comite.py "Plataforma SaaS de gestão financeira para MEIs"
-```
-
-## Saída
-
-O relatório é salvo em `relatorios/` com o formato:
+## Arquivos do repositório
 
 ```
-relatorios/20240315_143022_um_app_de_telemedicina.md
+README.md
+ORQUESTRADOR.md        # instruções completas para o Claude orquestrar o comitê
+squad/
+├── MAESTRO.md
+├── DESENVOLVEDOR.md
+├── INFRA.md
+├── ARQUITETO.md
+├── DEVOPS.md
+├── COMERCIAL.md
+├── RH.md
+└── AUDITOR.md
 ```
 
-Cada relatório contém as análises completas de todos os membros do comitê e o relatório executivo final do MAESTRO.
+## Como montar no Claude.ai
 
-## Expert Dinâmico (RH)
+### 1. Crie um Projeto
 
-O membro RH identifica automaticamente o domínio não-técnico mais crítico para a ideia (medicina, direito, contabilidade, etc.) e cria um system prompt personalizado para esse expert. O expert criado:
+No [Claude.ai](https://claude.ai), clique em **Projects** no menu lateral e crie um novo projeto. Sugestão de nome: `Comitê de Ideias`.
 
-1. Tem seu prompt salvo em `squad/experts/NOME_DO_EXPERT.md`
-2. É acionado automaticamente na Fase 1b (paralelo)
-3. Aparece no relatório final como "Expert Dinâmico"
+### 2. Anexe os arquivos
 
-## Estrutura de Arquivos
+Dentro do projeto, vá em **Project content** e anexe todos os arquivos `.md` deste repositório:
+
+- `ORQUESTRADOR.md`
+- `squad/MAESTRO.md`
+- `squad/DESENVOLVEDOR.md`
+- `squad/INFRA.md`
+- `squad/ARQUITETO.md`
+- `squad/DEVOPS.md`
+- `squad/COMERCIAL.md`
+- `squad/RH.md`
+- `squad/AUDITOR.md`
+
+### 3. Configure a instrução do projeto
+
+Em **Project instructions**, escreva apenas:
+
+> Leia o arquivo ORQUESTRADOR.md e siga as instruções.
+
+### 4. Pronto
+
+Abra uma nova conversa dentro do projeto e apresente sua ideia diretamente no chat. Todas as respostas do comitê aparecem aqui mesmo, na conversa.
+
+## Como usar
+
+**Análise completa:** apresente sua ideia em linguagem natural.
 
 ```
-idea-committee/
-├── comite.py              # Script principal
-├── requirements.txt
-├── .env.example
-├── squad/
-│   ├── DESENVOLVEDOR.md
-│   ├── INFRA.md
-│   ├── COMERCIAL.md
-│   ├── RH.md
-│   ├── ARQUITETO.md
-│   ├── DEVOPS.md
-│   ├── AUDITOR.md
-│   ├── MAESTRO.md
-│   └── experts/           # Experts dinâmicos criados pelo RH
-└── relatorios/            # Relatórios gerados
+Quero criar uma plataforma de gestão financeira para MEIs com
+emissão automática de notas fiscais e apuração de impostos.
 ```
+
+O comitê executa todas as fases e entrega o relatório final diretamente no chat.
+
+**Consulta direta:** após o relatório, faça perguntas a membros específicos.
+
+```
+DEVOPS, quanto custaria escalar para 50 mil usuários?
+```
+
+```
+AUDITOR, o que você acha do modelo de monetização proposto?
+```
+
+Apenas o membro convocado responde, com base no contexto da análise anterior.
+
+## Experts dinâmicos
+
+Quando o RH cria um novo especialista (ex: `CONTADOR.md`), o conteúdo desse arquivo aparece na resposta do RH durante a análise. Copie esse conteúdo, salve como `.md` e anexe ao projeto. Nas próximas sessões, o RH identificará que o expert já existe e o reutilizará sem recriar.
