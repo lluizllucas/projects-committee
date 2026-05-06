@@ -15,15 +15,14 @@ O Auditor fala por último entre os especialistas — depois de ler tudo — e t
 ```
 README.md
 ORQUESTRADOR.md        # instruções completas para o Claude orquestrar o comitê
-squad/
-├── MAESTRO.md
-├── DESENVOLVEDOR.md
-├── INFRA.md
-├── ARQUITETO.md
-├── DEVOPS.md
-├── COMERCIAL.md
-├── RH.md
-└── AUDITOR.md
+MAESTRO.md
+DESENVOLVEDOR.md
+INFRA.md
+ARQUITETO.md
+DEVOPS.md
+COMERCIAL.md
+RH.md
+AUDITOR.md
 ```
 
 ## Como montar no Claude.ai
