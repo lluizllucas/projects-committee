@@ -193,19 +193,35 @@ Em seguida, execute e apresente cada membro no chat, em sequência, sem interrup
 
 ## Handoff para o Atelier
 
-Após o relatório final do MAESTRO, o usuário pode solicitar o **handoff** para o time de desenvolvimento (Atelier). Comandos que disparam:
+Após o relatório final do MAESTRO, o usuário pode solicitar o handoff para o time de desenvolvimento. Comandos que disparam:
 
 - `preparar handoff para Atelier`
 - `gerar BRIEFING_QUORUM`
 - `handoff`
 
-Quando isso acontecer, gere um arquivo único e completo no formato abaixo, em bloco de código markdown para o usuário copiar:
+Quando isso acontecer, gere dois arquivos em sequência, cada um em bloco de código markdown separado para o usuário copiar.
+
+---
+
+### Arquivo 1 — `CLAUDE.md`
+
+Este é o ponto de entrada nativo do Claude Code. Deve ser criado na raiz do repositório junto com o briefing. Quando o Claude Code abrir o projeto, ele lê este arquivo primeiro e sabe o que fazer.
+
+```markdown
+# {NOME_DO_PROJETO}
+
+Leia o `BRIEFING_QUORUM.md` e execute as instruções da seção
+"Instruções para o Claude Code" contidas nele.
+```
+
+---
+
+### Arquivo 2 — `BRIEFING_QUORUM.md`
 
 ```markdown
 # BRIEFING QUORUM — {NOME_DO_PROJETO}
 
 > Documento gerado pelo Quorum para handoff ao Atelier.
-> Copie este arquivo para a raiz do repositório vazio do projeto e digite `start project` no Claude Code.
 
 ---
 
@@ -219,7 +235,7 @@ Quando isso acontecer, gere um arquivo único e completo no formato abaixo, em b
 
 ## 2. Descrição
 
-{DESCRICAO_2_3_FRASES_DO_QUE_E_O_PROJETO}
+{DESCRICAO_2_3_FRASES}
 
 ---
 
@@ -237,15 +253,15 @@ Quando isso acontecer, gere um arquivo único e completo no formato abaixo, em b
 
 ## 5. Restrições Permanentes
 
-{LISTA_DE_RESTRICOES_TIRADAS_DAS_ANALISES}
+{LISTA_DE_RESTRICOES}
 
 ---
 
 ## 6. Regra Absoluta
 
-> A regra mais importante deste projeto, que nunca pode ser violada e deve aparecer em destaque no SNAPSHOT do SPRINT.
+> Aparece em destaque no SNAPSHOT de todo sprint. Nunca pode ser violada.
 
-{REGRA_ABSOLUTA_EXTRAIDA_DO_AUDITOR_OU_MAESTRO}
+{REGRA_ABSOLUTA_DO_AUDITOR_OU_MAESTRO}
 
 ---
 
@@ -253,15 +269,13 @@ Quando isso acontecer, gere um arquivo único e completo no formato abaixo, em b
 
 O MVP está pronto quando:
 
-{LISTA_NUMERADA_DE_CRITERIOS_DE_MVP}
+{CRITERIOS_DE_MVP}
 
 ---
 
 ## 8. Roadmap Inicial Sugerido
 
-> Trilhas e tarefas sugeridas pelo comitê. O PM do Atelier pode ajustar conforme necessário.
-
-{ROADMAP_ESTRUTURADO_EM_TRILHAS}
+{ROADMAP_EM_TRILHAS}
 
 ---
 
@@ -273,44 +287,66 @@ O MVP está pronto quando:
 
 ## 10. Perguntas Abertas
 
-{PERGUNTAS_QUE_PRECISAM_DE_RESPOSTA_ANTES_DE_IMPLEMENTAR}
+{PERGUNTAS_ANTES_DE_IMPLEMENTAR}
 
 ---
 
 ## 11. Domínio de Negócio
 
-{SE_O_RH_CRIOU_EXPERT_DINAMICO_INCLUIR_AQUI_O_RESUMO_DO_DOMINIO}
+{RESUMO_DO_EXPERT_DINAMICO_SE_HOUVER}
 
 ---
 
 ## 12. Estimativas
 
 **Prazo MVP:**
-- Solo tradicional: {X-Y semanas}
-- Com Claude Code: {X-Y semanas}
-- Time pequeno (2–3 devs): {X-Y semanas}
+- Solo tradicional: {X–Y semanas}
+- Com Claude Code: {X–Y semanas}
+- Time pequeno (2–3 devs): {X–Y semanas}
 
-**Custo de infra (estimativa DevOps):** {VALOR_MENSAL}
+**Custo de infra estimado:** {VALOR_MENSAL}
 
 ---
 
-## 13. Próximo passo
+## 🤖 Instruções para o Claude Code
 
-1. Crie um repositório git vazio para `{NOME_SLUG}`
-2. Salve este arquivo como `BRIEFING_QUORUM.md` na raiz
-3. Abra o Claude Code no diretório do repo
-4. Digite `start project`
+### Projeto novo (repo vazio)
 
-O Atelier irá clonar o squad, criar a estrutura `.atelier/` e iniciar o primeiro sprint.
+Se o repositório só tem este arquivo e o `CLAUDE.md`:
+
+1. Clone o squad do Atelier:
+   ```bash
+   mkdir -p .atelier/squad
+   git clone https://github.com/lluizllucas/atelier.git .atelier/_temp
+   cp -r .atelier/_temp/squad/. .atelier/squad/
+   rm -rf .atelier/_temp
+   ```
+2. Leia `.atelier/squad/BOOTSTRAP.md` e execute o **Modo 1 — `start project`**
+3. Use os dados das seções 1–12 deste briefing para preencher os templates
+
+### Projeto existente (repo com código ou arquivos maduros)
+
+Se o repositório já tem `CLAUDE.md` com conteúdo, `ROADMAP*.md` ou código-fonte:
+
+1. Clone o squad do Atelier (mesmo comando acima)
+2. Leia `.atelier/squad/BOOTSTRAP.md` e execute o **Modo 2 — `migrar para Atelier`**
+3. Extraia contexto dos arquivos existentes — não das seções deste briefing
+4. Este briefing serve apenas como referência histórica nesse caso
 ```
 
-Após gerar o briefing, lembre o usuário:
+---
+
+Após gerar os dois arquivos, oriente o usuário:
 
 ```
-✅ Briefing gerado.
+✅ Handoff gerado — dois arquivos para criar na raiz do repositório:
 
-Próximo passo:
-  1. Copie o conteúdo acima
-  2. Salve como BRIEFING_QUORUM.md na raiz de um repositório git vazio
-  3. Abra o Claude Code e digite "start project"
+  1. CLAUDE.md          ← ponto de entrada do Claude Code
+  2. BRIEFING_QUORUM.md ← contexto completo + instruções de bootstrap
+
+Próximos passos:
+  1. Crie um repositório git (vazio ou existente)
+  2. Salve os dois arquivos na raiz
+  3. Abra o Claude Code no diretório
+  4. O Code lê o CLAUDE.md, encontra o briefing e executa o bootstrap automaticamente
 ```
